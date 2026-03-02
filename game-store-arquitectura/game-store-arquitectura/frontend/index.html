@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>GameStore Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#121212;
+--card:#1e1e2f;
+--primary:#6c5ce7;
+--secondary:#00cec9;
+--text:white;
+}
+.light{
+--bg:#f5f6fa;
+--card:white;
+--primary:#6c5ce7;
+--secondary:#00cec9;
+--text:#222;
+}
+body{
+margin:0;
+font-family:Poppins,sans-serif;
+background:var(--bg);
+color:var(--text);
+}
+header{
+background:linear-gradient(90deg,var(--primary),var(--secondary));
+padding:15px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.logo{font-weight:700;font-size:22px;}
+nav{display:flex;gap:15px;flex-wrap:wrap;}
+nav a, nav button{
+background:none;
+border:none;
+color:white;
+cursor:pointer;
+font-weight:500;
+}
+.section{padding:40px 8%;}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
+}
+.card{
+background:var(--card);
+border-radius:12px;
+padding:15px;
+transition:.3s;
+}
+.card:hover{transform:scale(1.05);}
+.card img{
+width:100%;
+height:260px;
+object-fit:cover;
+border-radius:8px;
+}
+button.action{
+background:var(--primary);
+border:none;
+padding:6px 10px;
+color:white;
+border-radius:6px;
+cursor:pointer;
+margin-top:5px;
+width:100%;
+}
+
+.panel{
+position:fixed;
+right:-400px;
+top:0;
+width:350px;
+height:100%;
+background:var(--card);
+padding:20px;
+transition:.4s;
+overflow:auto;
+z-index:999;
+}
+.panel.active{right:0;}
+
+.closeBtn{
+background:red;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+float:right;
+}
+
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+justify-content:center;
+align-items:center;
+}
+.modal-content{
+background:var(--card);
+padding:30px;
+border-radius:10px;
+width:300px;
+}
+
+.chat-box{
+display:none;
+position:fixed;
+bottom:80px;
+right:20px;
+width:280px;
+background:var(--card);
+padding:15px;
+border-radius:10px;
+}
+.chat{
+position:fixed;
+bottom:20px;
+right:20px;
+background:var(--primary);
+padding:15px;
+border-radius:50%;
+cursor:pointer;
+}
+
+footer{
+background:#0a0a0a;
+padding:40px 8%;
+margin-top:40px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+}
+footer h4{margin-bottom:10px;}
+input{
+padding:8px;
+border-radius:6px;
+border:none;
+margin:5px 0;
+width:100%;
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">🎮 GameStore</div>
+<nav>
+<a href="#catalogo">Catálogo</a>
+<a href="#populares">Populares</a>
+<a href="#descuentos">Descuentos</a>
+<a href="#lanzamientos">Próximos</a>
+<button onclick="toggleCart()">🛒 Carrito</button>
+<button onclick="toggleFavorites()">❤ Favoritos</button>
+<button onclick="openLogin()">Login</button>
+<button onclick="openRegister()">Registro</button>
+<button onclick="toggleMode()">Modo</button>
+</nav>
+</header>
+
+<section class="section" id="catalogo">
+<h2>Catálogo</h2>
+<div class="grid" id="catalogoGrid"></div>
+</section>
+
+<section class="section" id="populares">
+<h2>Juegos Populares</h2>
+<div class="grid" id="popularesGrid"></div>
+</section>
+
+<section class="section" id="descuentos">
+<h2>Descuentos</h2>
+<div class="grid" id="descuentosGrid"></div>
+</section>
+
+<section class="section" id="lanzamientos">
+<h2>Próximos Lanzamientos</h2>
+<div class="grid" id="lanzamientosGrid"></div>
+</section>
+
+<div id="cartPanel" class="panel">
+<button class="closeBtn" onclick="toggleCart()">X</button>
+<h2>Carrito</h2>
+<ul id="cartItems"></ul>
+<p id="emptyCart">El carrito está vacío</p>
+</div>
+
+<div id="favPanel" class="panel">
+<button class="closeBtn" onclick="toggleFavorites()">X</button>
+<h2>Favoritos</h2>
+<ul id="favItems"></ul>
+<p id="emptyFav">No tienes favoritos</p>
+</div>
+
+<div class="modal" id="loginModal">
+<div class="modal-content">
+<h3>Login</h3>
+<input placeholder="Correo">
+<input placeholder="Contraseña">
+<button onclick="closeLogin()">X</button>
+</div>
+</div>
+
+<div class="modal" id="registerModal">
+<div class="modal-content">
+<h3>Registro</h3>
+<input placeholder="Nombre">
+<input placeholder="Correo">
+<input placeholder="Contraseña">
+<button onclick="closeRegister()">X</button>
+</div>
+</div>
+
+<div class="chat" onclick="toggleChat()">💬</div>
+<div class="chat-box" id="chatBox">
+<div id="chatMessages">Hola 👋 ¿En qué puedo ayudarte?</div>
+<input id="chatInput" placeholder="Escribe y presiona Enter">
+</div>
+
+<footer>
+<div>
+<h4>Sobre Nosotros</h4>
+<p>Compra videojuegos en lìnea</p>
+</div>
+<div>
+<h4>Categorías</h4>
+<p>Acción</p>
+<p>RPG</p>
+<p>Deportes</p>
+<p>Romance</p>
+<p>Terror</p>
+<p>Suspenso</p>
+<p>Infantil</p>
+</div>
+<div>
+<h4>Suscríbete</h4>
+<input placeholder="Tu correo">
+<button class="action">Suscribirse</button>
+</div>
+</footer>
+
+<script>
+const juegos=[
+{name:"EA Sports FC 24",img:"https://upload.wikimedia.org/wikipedia/en/7/7c/EA_Sports_FC_24_cover.jpg"},
+{name:"Grand Theft Auto V",img:"https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png"},
+{name:"Red Dead Redemption 2",img:"https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_II.jpg"},
+{name:"The Witcher 3",img:"https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg"},
+{name:"Minecraft",img:"https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png"},
+{name:"Elden Ring",img:"https://upload.wikimedia.org/wikipedia/en/b/b9/Elden_Ring_Box_art.jpg"},
+{name:"Cyberpunk 2077",img:"https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg"},
+{name:"God of War",img:"https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg"},
+{name:"Hogwarts Legacy",img:"https://upload.wikimedia.org/wikipedia/en/3/33/Hogwarts_Legacy_cover.jpg"},
+{name:"Fortnite",img:"https://upload.wikimedia.org/wikipedia/en/0/0e/Fortnite_cover.jpg"}
+];
+
+let cart=[],favorites=[];
+
+function generarSeccion(id){
+const grid=document.getElementById(id);
+juegos.forEach((j,i)=>{
+const card=document.createElement("div");
+card.className="card";
+card.innerHTML=`
+<img src="${j.img}">
+<h3>${j.name}</h3>
+<p>$${(i+1)*5+30} USD</p>
+<button class="action" onclick="addToCart('${j.name}')">Agregar</button>
+<button class="action" onclick="addFavorite('${j.name}')">❤</button>
+`;
+grid.appendChild(card);
+});
+}
+
+["catalogoGrid","popularesGrid","descuentosGrid","lanzamientosGrid"]
+.forEach(generarSeccion);
+
+function addToCart(item){cart.push(item);renderCart();}
+function renderCart(){
+const list=document.getElementById("cartItems");
+list.innerHTML="";
+if(cart.length===0){
+document.getElementById("emptyCart").style.display="block";
+}else{
+document.getElementById("emptyCart").style.display="none";
+cart.forEach(i=>list.innerHTML+="<li>"+i+"</li>");
+}
+}
+
+function addFavorite(item){
+if(!favorites.includes(item)){
+favorites.push(item);
+renderFav();
+}
+}
+function renderFav(){
+const list=document.getElementById("favItems");
+list.innerHTML="";
+if(favorites.length===0){
+document.getElementById("emptyFav").style.display="block";
+}else{
+document.getElementById("emptyFav").style.display="none";
+favorites.forEach(i=>list.innerHTML+="<li>"+i+"</li>");
+}
+}
+
+function toggleCart(){document.getElementById("cartPanel").classList.toggle("active");}
+function toggleFavorites(){document.getElementById("favPanel").classList.toggle("active");}
+
+function toggleMode(){document.body.classList.toggle("light");}
+
+function openLogin(){document.getElementById("loginModal").style.display="flex";}
+function closeLogin(){document.getElementById("loginModal").style.display="none";}
+function openRegister(){document.getElementById("registerModal").style.display="flex";}
+function closeRegister(){document.getElementById("registerModal").style.display="none";}
+
+function toggleChat(){
+let box=document.getElementById("chatBox");
+box.style.display=box.style.display==="block"?"none":"block";
+}
+
+document.getElementById("chatInput").addEventListener("keypress",function(e){
+if(e.key==="Enter"){
+let msg=this.value;
+document.getElementById("chatMessages").innerHTML+="<br><b>Tú:</b> "+msg;
+document.getElementById("chatMessages").innerHTML+="<br><b>Bot:</b> Gracias por tu mensaje 🎮<br>";
+this.value="";
+}
+});
+</script>
+
+</body>
+</html>
