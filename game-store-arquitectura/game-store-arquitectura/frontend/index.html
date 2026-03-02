@@ -7,17 +7,19 @@
 
 <style>
 :root{
---bg:#121212;
+--bg:#0d1117;
 --card:#1e1e2f;
---primary:#6c5ce7;
---secondary:#00cec9;
+--primary:#ff6ec7;
+--secondary:#6c5ce7;
+--accent:#00ffe0;
 --text:white;
 }
 .light{
 --bg:#f5f6fa;
 --card:white;
---primary:#6c5ce7;
---secondary:#00cec9;
+--primary:#ff6ec7;
+--secondary:#6c5ce7;
+--accent:#00c2ba;
 --text:#222;
 }
 body{
@@ -32,15 +34,53 @@ padding:15px 5%;
 display:flex;
 justify-content:space-between;
 align-items:center;
+position:relative;
 }
-.logo{font-weight:700;font-size:22px;}
-nav{display:flex;gap:15px;flex-wrap:wrap;}
+.logo{font-weight:700;font-size:24px;}
+nav{display:flex;gap:15px;align-items:center;flex-wrap:wrap;}
 nav a, nav button{
 background:none;
 border:none;
 color:white;
 cursor:pointer;
 font-weight:500;
+position:relative;
+}
+nav .dropdown{
+position:relative;
+}
+nav .dropdown-content{
+display:none;
+position:absolute;
+top:30px;
+left:0;
+background:var(--card);
+min-width:150px;
+border-radius:8px;
+overflow:hidden;
+z-index:10;
+box-shadow:0 4px 10px rgba(0,0,0,.5);
+}
+nav .dropdown-content a{
+display:block;
+padding:8px 12px;
+color:var(--text);
+text-decoration:none;
+transition:.2s;
+}
+nav .dropdown-content a:hover{background:var(--secondary);}
+nav .dropdown:hover .dropdown-content{display:block;}
+
+.search-box{
+margin-left:15px;
+position:relative;
+}
+.search-box input{
+padding:6px 10px;
+border-radius:6px;
+border:none;
+outline:none;
+width:180px;
 }
 .section{padding:40px 8%;}
 .grid{
@@ -62,14 +102,15 @@ object-fit:cover;
 border-radius:8px;
 }
 button.action{
-background:var(--primary);
+background:var(--accent);
 border:none;
 padding:6px 10px;
-color:white;
+color:#111;
 border-radius:6px;
 cursor:pointer;
 margin-top:5px;
 width:100%;
+font-weight:600;
 }
 
 .panel{
@@ -85,7 +126,6 @@ overflow:auto;
 z-index:999;
 }
 .panel.active{right:0;}
-
 .closeBtn{
 background:red;
 color:white;
@@ -128,10 +168,12 @@ border-radius:10px;
 position:fixed;
 bottom:20px;
 right:20px;
-background:var(--primary);
+background:var(--accent);
 padding:15px;
 border-radius:50%;
 cursor:pointer;
+color:#111;
+font-weight:700;
 }
 
 footer{
@@ -158,9 +200,24 @@ width:100%;
 <div class="logo">🎮 GameStore</div>
 <nav>
 <a href="#catalogo">Catálogo</a>
+<div class="dropdown">
+<button>Categorías ▾</button>
+<div class="dropdown-content">
+<a href="#">Acción</a>
+<a href="#">RPG</a>
+<a href="#">Deportes</a>
+<a href="#">Romance</a>
+<a href="#">Terror</a>
+<a href="#">Suspenso</a>
+<a href="#">Infantil</a>
+</div>
+</div>
 <a href="#populares">Populares</a>
 <a href="#descuentos">Descuentos</a>
 <a href="#lanzamientos">Próximos</a>
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Buscar juego...">
+</div>
 <button onclick="toggleCart()">🛒 Carrito</button>
 <button onclick="toggleFavorites()">❤ Favoritos</button>
 <button onclick="openLogin()">Login</button>
@@ -231,7 +288,7 @@ width:100%;
 <footer>
 <div>
 <h4>Sobre Nosotros</h4>
-<p>Compra videojuegos en lìnea</p>
+<p>Compra videojuegos en línea</p>
 </div>
 <div>
 <h4>Categorías</h4>
@@ -336,6 +393,17 @@ document.getElementById("chatMessages").innerHTML+="<br><b>Tú:</b> "+msg;
 document.getElementById("chatMessages").innerHTML+="<br><b>Bot:</b> Gracias por tu mensaje 🎮<br>";
 this.value="";
 }
+});
+
+// Filtrar juegos por búsqueda
+document.getElementById("searchInput").addEventListener("input",function(){
+let val=this.value.toLowerCase();
+["catalogoGrid","popularesGrid","descuentosGrid","lanzamientosGrid"].forEach(id=>{
+const grid=document.getElementById(id);
+Array.from(grid.children).forEach(card=>{
+card.style.display=card.querySelector("h3").innerText.toLowerCase().includes(val)?"block":"none";
+});
+});
 });
 </script>
 
